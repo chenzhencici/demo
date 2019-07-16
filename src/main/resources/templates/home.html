@@ -24,5 +24,43 @@
 <body>
     <h1>this is thymeleaf</h1>
 
+    <table id="demoTab">
+        <thead>
+            <tr>
+                <th>col1</th>
+                <th>col2</th>
+            </tr>
+        </thead>
+<!--        <tbody>-->
+<!--            <tr>-->
+<!--                <td>1-1</td>-->
+<!--                <td>1-2</td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <td>2-1</td>-->
+<!--                <td>2-2</td>-->
+<!--            </tr>-->
+<!--        </tbody>-->
+    </table>
+<script>
+    $(document).ready(function(){
+
+        // var data = [];
+        // data.push(['1-1','1-2']);
+        // data.push(['2-1','2-2']);
+        // $("#demoTab").DataTable({
+        //     data:data
+        // });
+        var data = [{"col1":"1-1","col2":"1-2"},{"col1":"2-1","col2":"2-2"}];
+        $("#demoTab").DataTable({
+            data:data,
+            columns:[
+                {"data":"col1"},
+                {"data":"col2"}
+            ]
+
+        })
+    })
+</script>
 </body>
 </html>
