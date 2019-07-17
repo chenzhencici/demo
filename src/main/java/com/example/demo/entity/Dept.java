@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "pub_dept")
@@ -13,6 +14,10 @@ public class Dept {
     private String deptName;
     @Column
     private String address;
+    @Column
+    private Integer status;
+    @Column
+    private Date createDate;
 
     public Dept() {
     }
@@ -41,12 +46,30 @@ public class Dept {
         this.address = address;
     }
 
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Dept{" +
                 "id=" + id +
                 ", deptName='" + deptName + '\'' +
                 ", address='" + address + '\'' +
+                ", status=" + status +
+                ", createDate=" + createDate +
                 '}';
     }
 }
