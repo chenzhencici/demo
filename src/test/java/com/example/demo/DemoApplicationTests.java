@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import com.example.demo.dao.DeptDao;
-import com.example.demo.entity.ResultData;
 import com.example.demo.service.DeptService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +25,8 @@ public class DemoApplicationTests {
 
     @Test
     public void contextLoads() {
-        ResultData data = deptService.search();
-        System.out.println(data);
+//        ResultData data = deptService.search();
+//        System.out.println(data);
 
     }
 

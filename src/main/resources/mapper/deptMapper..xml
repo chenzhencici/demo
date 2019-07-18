@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.DeptDao">
+    <select id="search" parameterType="DeptQuery" resultType="map">
+        select ID,ADDRESS,DEPT_NAME DEPTNAME,to_char(CREATE_DATE,'yyyy-MM-dd HH24:MI:ss') CREATEDATE,STATUS from pub_dept
+        <where>
+            <if test="keyword != null and keyword != ''">
+                DEPT_NAME = #{keyword}
+            </if>
+
+        </where>
+        <choose>
+            <when test="orderSql == null or orderSql == ''">
+                order by id desc
+            </when>
+            <otherwise>
+                #{orderSql}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="searchCount" parameterType="DeptQuery" resultType="integer">
+        select count(1) from pub_dept
+        <where>
+            <if test="keyword != null and keyword != ''">
+                DEPT_NAME = #{keyword}
+            </if>
+        </where>
+    </select>
+
+</mapper>

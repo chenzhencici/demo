@@ -20,6 +20,7 @@
     <script type="text/javascript" charset="utf8" src="/bootbox/bootbox.min.js"></script>
     <script type="text/javascript" charset="utf8" src="/bootbox/bootbox.locales.min.js"></script>
 
+
 </head>
 <body>
     <h1>this is thymeleaf</h1>
@@ -35,20 +36,72 @@
         </thead>
     </table>
 <script>
+
+    var language = {
+        "sProcessing": false,
+        "sLengthMenu": "-- 显示 _MENU_ 条数据",
+        "sZeroRecords": "没有匹配结果",
+        "sInfo": "共  _MAX_ 条 -- 显示 _START_ 到 _END_ 条",
+        "sInfoEmpty": "",
+        "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
+        "sInfoPostFix": "",
+        "sSearch": "搜索:",
+        "sUrl": "",
+        "sEmptyTable": "无数据",
+        "sLoadingRecords": "载入中...",
+        "sInfoThousands": ",",
+        "oPaginate": {
+            "sFirst": "首页",
+            "sPrevious": "上页",
+            "sNext": "下页",
+            "sLast": "尾页"
+        },
+        "oAria": {
+            "sSortAscending": "正序",
+            "sSortDescending": "倒序"
+        }
+    };
+
+    var config = {
+        autoWidth:true,
+        language: language,//国际化
+        searching:false,//搜索框 不显示
+        serverSide:true,//开启服务器模式
+        pagingType : "simple_numbers",
+        ajax: doSearch,
+        dom:'<"toolbar">tilp',
+        lengthMenu:[20,50,100],
+        "paging":true,
+        "scrollY":'400'
+    }
     $(document).ready(function(){
         var date = new Date();
         var data = [{"col1":"1-1","col2":"1-2"},{"col1":"2-1","col2":date}];
-        $("#demoTab").DataTable({
-            data:data,
-            columns:[
-                {"data":"ID"},
-                {"data":"DEPTNAME"},
-                {"data":"ADDRESS"},
-                {"data":"CREATEDATE"}
-            ]
-
-        })
+        config.columns = [
+            {"data":"ID"},
+            {"data":"DEPTNAME"},
+            {"data":"ADDRESS"},
+            {"data":"CREATEDATE"}
+        ];
+        $("#demoTab").DataTable( config )
     })
+    function doSearch(data,callback,settings) {
+        debugger;
+        var param = JSON.stringify(data);
+        // var query = $("#queryForm").serialize();
+        // if(isNull(query.dmmc)){
+        //     query.dmdm = '';
+        // }
+        var para = "pageJson="+param;
+        $.ajax({
+            url:'/dept/search',
+            type:'POST',
+            data:para,
+            success:function(result){
+                callback(result);
+            }
+        })
+    }
 </script>
 </body>
 </html>

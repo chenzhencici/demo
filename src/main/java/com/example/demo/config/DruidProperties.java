@@ -11,6 +11,7 @@ public class DruidProperties {
     private String url;
     private String username;
     private String password;
+    private String filters;
     private Integer initialSize;
     private Integer minIdle;
     private Integer maxActive;
@@ -23,6 +24,7 @@ public class DruidProperties {
     private Boolean testWhileIdle;
     private Integer timeBetweenEvictionRunsMillis;
     private Integer minEvictableIdleTimeMillis;
+    private String connectionProperties;
 
     public String getDriver() {
         return driver;
@@ -150,5 +152,21 @@ public class DruidProperties {
 
     public void setMinEvictableIdleTimeMillis(Integer minEvictableIdleTimeMillis) {
         this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    }
+
+    public String getFilters() {
+        return filters;
+    }
+
+    public void setFilters(String filters) {
+        this.filters = filters;
+    }
+
+    public String getConnectionProperties() {
+        return connectionProperties;
+    }
+
+    public void setConnectionProperties(String connectionProperties) {
+        this.connectionProperties = connectionProperties;
     }
 }
