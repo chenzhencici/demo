@@ -1,32 +1,26 @@
 package com.example.demo;
 
-import com.example.demo.dao.DeptDao;
-import com.example.demo.service.DeptService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.sql.DataSource;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DemoApplicationTests {
 
-    @Autowired
-    DataSource dataSource;
-
-    @Autowired
-    DeptDao deptDao;
-
-    @Autowired
-    DeptService deptService;
+    private static final Log log = LogFactory.getLog(DemoApplicationTests.class);
 
     @Test
     public void contextLoads() {
-//        ResultData data = deptService.search();
-//        System.out.println(data);
+
+        log.trace("trace 级别的日志");
+        log.debug("debug 级别的日志");
+        log.info("info 级别的日志");
+        log.warn("warn 级别的日志");
+        log.error("error 级别的日志");
 
     }
 
