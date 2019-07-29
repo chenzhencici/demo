@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Layui-home</title>
+    <link rel="stylesheet" href="/layui-v2.5.4/css/layui.css">
+
+</head>
+<body>
+<script src="/layui-v2.5.4/layui.js"></script>
+
+<script>
+    //一般直接写在一个js文件中
+    layui.use(['layer', 'form'], function(){
+        var layer = layui.layer
+        var form = layui.form;
+
+    });
+    debugger;
+    layui.data("map",{key:'name',value:'CICI'});
+    layui.data("map",null);
+    var localTest = layui.data('map');
+    console.log(localTest.name); //获得“贤心”
+    var device = layui.device();
+    console.log(device)
+</script>
+</body>
+</html>
