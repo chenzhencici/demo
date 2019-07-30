@@ -12,47 +12,46 @@
     <script type="text/javascript" src="http://2.34.38.203:25002/jsmap/1.0/demo/scripts/jsurl.js"></script>
     <script type="text/javascript" src="http://2.34.38.203:25001/as/webapi/js/auth?v=1.0&t=jsmap&ak=ec85d3648154874552835438ac6a02b2"></script>
 
-    <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=您申请的key值"></script>
 </head>
 <body  style="margin:0px;padding:0px">
-    <div id="map" style="width: 100%;height: 100%"></div>
+<div id="demoMap" style="width: 100%;height: 100%"></div>
 
-    <div id="pannel" class="contro_panel contro_panel_position_lr contro_panel_width">
-        <div class="content">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <input type="checkbox" onclick="toggleScale(this)">比例尺&nbsp;
-            <input type="checkbox" onclick="toggleNavi(this)">导航条
-        </div>
+<script>
+    var map,marker;
+    function initMap(){
+        map = new IMAP.Map("demoMap",{
+            maxZoom:22,
+            minZoom:3,
+            zoom:16,
+            center:new IMAP.LngLat(120.7659137249,31.6404941298)
+        })
+    }
+    function toggleAddMarker() {
+        if(map){
+            toggleRemoveMarker();
+            var opts=new IMAP.MarkerOptions();
+            opts.anchor = IMAP.Constants.BOTTOM_CENTER;
+            opts.icon=new IMAP.Icon(IMAP.MapConfig.API_REALM_NAME+"images/point_1.png",{"size":new IMAP.Size(35, 30),"offset":new IMAP.Pixel(1, 0)});
 
-    </div>
-    <div  class="contro_panel contro_panel_position_l contro_panel_height" style="width:200px;height:50px;overflow-y: inherit;">
-        &nbsp;&nbsp;请输入关键字：
-        <div style="margin-left: 12px;margin-top: 4px;">
-            <input id="keyword" type="text" class="text" onkeyup="doSuggest(this)">
-            <div id="suggestId" style="position: fixed;background-color: #ffffff;border: 1px solid #d1d1d1;visibility: visible; min-width: 151px; display: none;"></div>
-        </div>
-    </div>
-    <div class="contro_panel contro_panel_position_ld">
-        <div class="content">
-            <input type="radio" name="draw" onclick="toggleDrawMarker()">点标注&nbsp;
-            <input type="radio" name="draw" onclick="toggleDrawPolyline()">绘制折线&nbsp;
-            <input type="radio" name="draw" onclick="toggleDrawPolygon()">绘制多边形&nbsp;
-            <input type="radio" name="draw" onclick="toggleDrawRect()">绘制矩形
-            <input type="radio" name="draw" onclick="toggleDrawCircle()">绘制圆形
-            <input type="radio" id="close" name="draw" onclick="toggleDrawClose()" checked="checked">关闭绘制
-        </div>
-    </div>
-
-    <div  class="contro_panel contro_panel_position_bc">
-        <div class="content">
-            <input type="checkbox" checked="checked" onclick="toggleDragable(this)">允许拖拽地图&nbsp;
-            <input type="checkbox" checked="checked" onclick="toggleKeyboard(this)">允许键盘平移&nbsp;
-            <input type="checkbox" checked="checked" onclick="toggleDoubleClickZoom(this)">允许双击放大&nbsp;
-            <input type="checkbox" checked="checked" onclick="toggleScrollWheel(this)">允许鼠标缩放
-        </div>
-        <input type="button" class="button" value="改变地图中心点及缩放级别" onclick="toggleChangemap()">
-    </div>
+            var lnglat=new IMAP.LngLat(120.7659137249,31.6404941298);
+            if(lnglat){
+                marker=new IMAP.Marker(lnglat, opts);
+                map.getOverlayLayer().addOverlay(marker, true);
+            }
+        }
+    }
+    //删除点标注
+    function toggleRemoveMarker(){
+        if (!marker) {return;}
+        map.getOverlayLayer().removeOverlay(marker);
+        marker = null;
+    }
+    initMap();
+    addRoadNetLayer();
+    toggleAddMarker();
+</script>
 </body>
+
 </html>
 
 
@@ -66,361 +65,5 @@
 
 
 <script type="text/javascript">
-    var map;
-    var navi;
-    var scale;
-    var copyright;
-    var markers=[];
-    var tool, contextmenuEvt, addoverlayEvt;
-    function initMap() {
-        map = new IMAP.Map("map",{
-            minZoom: 3,
-            maxZoom: 22,
-            zoom : 14,//设置地图初始化级别
-            center : new IMAP.LngLat(120.755805,31.644702),//设置地图中心点坐标
-            animation : true,//设置地图缩放动画效果
-            // scrollWheel : false,//设置地图是否滚轮缩放
-            // dragable : false,//设置地图是否鼠标拖拽
-            // keyboard : false,//设置地图是否键盘操作
 
-            // dblclickZoom : false//设置地图是否双击放大
-            tileUrl : ["http://{s}/v3/tile?z={z}&x={x}&y={y}",[host+":25333",host+":25333"]]
-        })
-        navi = new IMAP.NavigationControl({
-            visible:false
-        })
-        scale = new IMAP.ScaleControl({
-            visible:false
-        })
-        copyright = new IMAP.CopyrightControl({
-            visible:false
-        })
-        map.addControl(navi);
-        map.addControl(scale);
-        map.addControl(copyright);
-
-        // doSearch(1);
-        // toGeocoder();
-        // plan();
-        map.plugin(['IMAP.Tool'])//下载鼠标工具插件
-    };
-
-    function doSearch(pageNo){
-        if(map){
-            var keyword='南站',city='常熟';
-            map.plugin(['IMAP.PoiSearch'], function(){
-                poiSearch=new IMAP.PoiSearch({panel: "resultDiv",map: map, pageSize: 5, scope: "all"});
-                poiSearch.setPageNumber(parseInt(pageNo-1));
-                poiSearch.search(keyword,city);
-            });
-        }
-    }
-
-    function toggleScale(checkbox){
-        if(checkbox.checked){
-            scale.visible(true);
-        }else{
-            scale.visible(false);
-        }
-    }
-
-    function toggleNavi(checkbox){
-        if(checkbox.checked){
-            navi.visible(true);
-        }else{
-            navi.visible(false);
-        }
-    }
-    function toggleDragable(checkbox) {
-        if (checkbox.checked) {
-            map.dragged(true);
-        } else {
-            map.dragged(false);
-        }
-    }
-    function toggleKeyboard(checkbox) {
-        if (checkbox.checked) {
-            map.keyboard(true);
-        } else {
-            map.keyboard(false);
-        }
-    }
-    function toggleDoubleClickZoom(checkbox) {
-        if (checkbox.checked) {
-            map.dblclickZoom(true);
-        } else {
-            map.dblclickZoom(false);
-        }
-    }
-    function toggleScrollWheel(checkbox) {
-        if (checkbox.checked) {
-            map.scrollWheelZoom(true);
-        } else {
-            map.scrollWheelZoom(false);
-        }
-    }
-    function toggleChangemap() {
-        map.setCenter(new IMAP.LngLat(LBS.centerX,LBS.centerY), 8);
-    }
-
-
-    // 输入提示==========start===============
-    //POI联想词搜索
-    function doSuggest(obj){
-        debugger;
-        var keyword=document.getElementById("keyword").value,suggestId=document.getElementById("suggestId"),city=chengshi;
-        while(suggestId.hasChildNodes()){
-            suggestId.removeChild(suggestId.firstChild);
-        }
-        if(!keyword){
-            return;
-        }
-        map.plugin(['IMAP.Suggest'], function(){
-            suggest=new IMAP.Suggest();
-            suggest.search(keyword,city,function(status,results) {
-                if (status==0) {
-                    var records = results.results,record, li;
-                    suggestId.style.display = "block";
-                    var ul = document.createElement("ul");
-                    ul.style.backgroundColor = "rgb(181, 53, 53)";
-                    for (var i = 0, l = records.length; i < l; ++i) {
-                        record = records[i];
-                        li = document.createElement("li");
-                        li.innerHTML = record.name;
-                        addSuggestEvt(record.name, li);
-                        ul.appendChild(li);
-                    }
-                    suggestId.appendChild(ul);
-                }
-            });
-        });
-
-    }
-    function addSuggestEvt(name,obj){
-        obj.onclick=function(){
-            var suggestId=document.getElementById("suggestId");
-            while(suggestId.hasChildNodes()){
-                suggestId.removeChild(suggestId.firstChild);
-            }
-            suggestId.style.display="none";
-            document.getElementById("keyword").value=name;
-            doSearch(1);
-        }
-        obj.onmouseover=function(){
-            obj.style.backgroundColor="#cacaca";
-        };
-        obj.onmouseout=function(){
-            obj.style.backgroundColor="rgb(181, 53, 53)";
-        };
-    }
-    //POI搜索
-    function doSearch(pageNo){
-        if(map){
-            clearReaults();
-            var keyword=document.getElementById("keyword").value,city=chengshi;
-            if(!keyword){
-                return;
-            }
-            var icons={
-                "0":{size:{"width":33,"height":30},offset:{x:-34,y:0}},
-                "1":{size:{"width":33,"height":30},offset:{x:-68,y:0}},
-                "2":{size:{"width":33,"height":30},offset:{x:-102,y:0}},
-                "3":{size:{"width":33,"height":30},offset:{x:-136,y:0}},
-                "4":{size:{"width":33,"height":30},offset:{x:-170,y:0}},
-                "5":{size:{"width":33,"height":30},offset:{x:-204,y:0}},
-                "6":{size:{"width":33,"height":30},offset:{x:-238,y:0}},
-                "7":{size:{"width":33,"height":30},offset:{x:-272,y:0}},
-                "8":{size:{"width":33,"height":30},offset:{x:-306,y:0}},
-                "9":{size:{"width":33,"height":30},offset:{x:-340,y:0}}
-            };
-            var toFunc=function(markers){
-                poiSearch.setPageNumber(parseInt(pageNo-1));
-                poiSearch.search(keyword,city,function(status,result){
-                    if(status==0){
-                        var datas=result.results,marker,data,content;
-                        var iconUrl=IMAP.MapConfig.API_REALM_NAME+IMAP.MapConfig._MAP_POINT_URL;
-                        var icon;
-                        for(var i=0,l=datas.length;i<l;++i){
-                            data=datas[i];
-                            icon=icons[i];
-                            if(!icon){
-                                icon=icons[0];
-                            }
-                            marker=new IMAP.Marker(new IMAP.LngLat(data.location.lng,data.location.lat),{icon:new IMAP.Icon(iconUrl,icon.size,icon.offset)});
-                            marker._data=data;
-                            addEvent(marker);
-                            markers.push(marker);
-                        }
-                        map.getOverlayLayer().addOverlays(markers,true);
-                    }
-                });
-            }
-            map.plugin(['IMAP.PoiSearch'], function(){
-                poiSearch=new IMAP.PoiSearch({pageSize: 5});
-                toFunc(markers);
-            });
-        }
-    }
-    //添加点事件
-    function addEvent(m){
-        m.addEventListener(IMAP.Constants.CLICK,function(cObj){
-            displayInfoWindow(m,m._data);
-        },m);
-    }
-    //显示信息框
-    function displayInfoWindow(m,data){
-        var content = "<div style=\"font-family:\"微软雅黑\",Arial, Helvetica, sans-serif;font-size:12px;\">地址："+data.address;
-        if(data.telephone){
-            content+=("<br />电话："+data.telephone);
-        }
-        content+="</div></div>";
-        m.openInfoWindow(content,{
-            title:data.name,
-            offset:new IMAP.Pixel(-5,-30),
-            size:new IMAP.Size(250,100)
-        });
-    }
-    //清空
-    function clearReaults(){
-        map.getOverlayLayer().clear(markers);
-        markers=[];
-    }
-    // 输入提示===========end================
-
-
-    // 地理编码
-    //地理编码
-    function toGeocoder(obj){
-        map.plugin(['IMAP.Geocoder'], function(){
-            geocoder=new IMAP.Geocoder({city:"深圳", pois:true});
-            geocoder.getAddress(new IMAP.LngLat(LBS.centerX,LBS.centerY),displayPOI);
-        });
-    }
-    //显示poi信息
-    function displayPOI(status,results){
-        if(status==0){
-            var results=results.result,datas,data;
-            datas=results[0];
-            var plnglat=datas.location;
-            var marker = addUserMarker(new IMAP.LngLat(plnglat.lng,plnglat.lat),true);
-            addPOIInfowindow(marker, {"lnglat":plnglat, "address":datas.formatted_address});
-        }
-    }
-    //逆地理编码搜索返回执行函数
-    function addUserMarker(lnglat,bool){
-        var icon=new IMAP.Icon("../../imgs/marker.png",
-            {"size":{"width":32,"height":32}
-            });
-        var opt={"icon":icon};
-        var marker=new IMAP.Marker(lnglat,opt);
-        map.getOverlayLayer().addOverlay(marker);
-        return marker;
-    }
-    //添加POI事件
-    function addPOIInfowindow(m, infomation){
-        var c="经纬度: "+infomation.lnglat.lng+", "+infomation.lnglat.lat+"</br>地理编码结果为: "+infomation.address;
-        m.addEventListener(IMAP.Constants.CLICK,function(cObj){
-            m.openInfoWindow(c,{"autoPan": true, "offset":new IMAP.Pixel(-5,-27)});
-        },m);
-        m.openInfoWindow(c,{"autoPan": true, "offset":new IMAP.Pixel(-5,-27)});
-    }
-
-    //路径规划
-    function plan(){
-        var slnglat=new IMAP.LngLat(LBS.centerX,LBS.centerY),elnglat=new IMAP.LngLat(LBS.centerX-0.020,LBS.centerY+0.010);
-        map.plugin(['IMAP.Walking'], function(){
-            walkingSearch=new IMAP.Walking({panel: "pannel", map: map});
-            walkingSearch.search(slnglat, elnglat);
-        });
-    }
-
-
-    //绘制点
-    function toggleDrawMarker() {
-        toggleDrawClose();
-        tool = new IMAP.MarkerTool(new IMAP.Icon(("apidemos/sourceLinks/start.png"),{"size":{"width":20,"height":29}}));
-        tool.follow=true;
-        tool.autoClose=true;
-        map.addTool(tool);
-        tool.open();
-        addoverlayEvt = tool.addEventListener(IMAP.Constants.ADD_OVERLAY,function(evt){
-            document.getElementById("close").checked = "checked";
-        },this);
-        contextmenuEvt = map.addEventListener(IMAP.Constants.MOUSE_CONTEXTMENU,function(event){
-            document.getElementById("close").checked = "checked";
-        },map);
-    }
-    //绘制折线
-    function toggleDrawPolyline() {
-        toggleDrawClose();
-        tool=new IMAP.PolylineTool();
-        tool.arrow = false;//是否带箭头绘制
-        tool.autoClose = true;//是否自动关闭绘制
-        map.addTool(tool);
-        tool.open();
-        addoverlayEvt = tool.addEventListener(IMAP.Constants.ADD_OVERLAY,function(evt){
-            document.getElementById("close").checked = "checked";
-            var st = evt.overlay.getPath();
-            console.info(st);
-            alert(st);
-        },this);
-    }
-    //绘制多边形
-    function toggleDrawPolygon() {
-        toggleDrawClose();
-
-        tool=new IMAP.PolygonTool();
-        tool.autoClose = true;//是否自动关闭绘制
-        map.addTool(tool);
-        tool.open();
-
-        addoverlayEvt = tool.addEventListener(IMAP.Constants.ADD_OVERLAY,function(evt){
-            document.getElementById("close").checked = "checked";
-
-        },this);
-    }
-    //绘制矩形
-    function toggleDrawRect() {
-        toggleDrawClose();
-
-        tool=new IMAP.RectangleTool();
-        tool.autoClose = true;//是否自动关闭绘制
-        map.addTool(tool);
-        tool.open();
-
-        addoverlayEvt = tool.addEventListener(IMAP.Constants.ADD_OVERLAY,function(evt){
-            document.getElementById("close").checked = "checked";
-        },this);
-    }
-    //绘制圆形
-    function toggleDrawCircle() {
-        toggleDrawClose();
-
-        tool=new IMAP.CircleTool();
-        tool.autoClose = true;//是否自动关闭绘制
-        map.addTool(tool);
-        tool.open();
-
-        addoverlayEvt = tool.addEventListener(IMAP.Constants.ADD_OVERLAY,function(evt){
-            document.getElementById("close").checked = "checked";
-        },this);
-    }
-    //关闭绘制
-    function toggleDrawClose() {
-        if (tool){
-            if (addoverlayEvt) {
-                tool.removeEventListener(addoverlayEvt);
-            }
-
-            tool.close();
-            tool = null;
-            if (contextmenuEvt) {
-                map.removeEventListener(contextmenuEvt);
-            }
-
-        }
-    }
-
-    initMap();
-    // addRoadNetLayer() //添加路网图层
 </script>
