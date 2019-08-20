@@ -16,6 +16,14 @@
 <body  style="margin:0px;padding:0px">
 <div id="demoMap" style="width: 100%;height: 100%"></div>
 
+<div id="panel" class="contro_panel_button contro_panel_position_lr" style="width:278px;">
+    <div style='font-family: "Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif;color: #565656;font-size: 12px;line-height: 22px;word-wrap: break-word;background-color: #fff;border: 1px solid silver;'>
+        <div id="resultDiv" style="background: #fff;">
+
+        </div>
+    </div>
+</div>
+
 <script>
     var map,marker;
     function initMap(){
@@ -23,23 +31,38 @@
             maxZoom:22,
             minZoom:3,
             zoom:16,
-            center:new IMAP.LngLat(120.7659137249,31.6404941298)
+            center:new IMAP.LngLat(120.7663804293,31.6405854704)
         })
+        // map.addEventListener(IMAP.Constants.CLICK,clickEvent,map);
+        doSearch(1);
     }
+
+    function doSearch(pageNo){
+        if(map){
+            var keyword='湖圩西',city='常熟市';
+            map.plugin(['IMAP.PoiSearch'], function(){
+                poiSearch=new IMAP.PoiSearch({panel: "resultDiv",map: map, pageSize: 5, scope: "all"});
+                poiSearch.setPageNumber(parseInt(pageNo-1));
+                poiSearch.search(keyword,city);
+            });
+        }
+    }
+
     function toggleAddMarker() {
         if(map){
             toggleRemoveMarker();
             var opts=new IMAP.MarkerOptions();
             opts.anchor = IMAP.Constants.BOTTOM_CENTER;
-            opts.icon=new IMAP.Icon(IMAP.MapConfig.API_REALM_NAME+"images/point_1.png",{"size":new IMAP.Size(35, 30),"offset":new IMAP.Pixel(1, 0)});
 
-            var lnglat=new IMAP.LngLat(120.7659137249,31.6404941298);
+            opts.icon=new IMAP.Icon(IMAP.MapConfig.API_REALM_NAME+"images/point_1.png",{"size":new IMAP.Size(35, 30),"offset":new IMAP.Pixel(1, 0)});
+            var lnglat=new IMAP.LngLat(120.7663804293,31.6405854704);
             if(lnglat){
                 marker=new IMAP.Marker(lnglat, opts);
                 map.getOverlayLayer().addOverlay(marker, true);
             }
         }
     }
+
     //删除点标注
     function toggleRemoveMarker(){
         if (!marker) {return;}

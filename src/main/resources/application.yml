@@ -1,6 +1,6 @@
 server:
 #  tomcat \u7AEF\u53E3
-  port: 8888
+  port: 8181
 #  uri \u7F16\u7801\u683C\u5F0F
   tomcat:
     uri-encoding: utf-8

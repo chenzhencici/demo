@@ -23,14 +23,15 @@
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
-<!--        <destination>localhost:9601</destination>-->
-<!--        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">-->
-<!--&lt;!&ndash;            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>&ndash;&gt;-->
-<!--            <customFields>{"appname":"yang_test"}</customFields>-->
-<!--        </encoder>-->
+<!--    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>localhost:9601</destination>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+&lt;!&ndash;            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</pattern>&ndash;&gt;
+            <customFields>{"appname":"yang_test"}</customFields>
+        </encoder>
 
-<!--    </appender>-->
+    </appender>-->
+
 
     <root level="info">
         <appender-ref ref="console" />
